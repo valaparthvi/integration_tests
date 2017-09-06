@@ -6,9 +6,9 @@ from cfme.cloud.keypairs import KeyPairCollection
 from cfme.cloud.provider.openstack import OpenStackProvider
 from cfme.exceptions import KeyPairNotFound
 from cfme.web_ui import mixins
-from utils import testgen
-from utils.blockers import BZ
-from utils.wait import TimedOutError
+from cfme.utils import testgen
+from cfme.utils.blockers import BZ
+from cfme.utils.wait import TimedOutError
 
 pytestmark = [
     pytest.mark.usefixtures('setup_provider', 'openstack_provider')
