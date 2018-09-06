@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 from navmazing import NavigateToSibling
-from widgetastic.utils import Parameter
-from widgetastic.widget import View
-from widgetastic_patternfly import Accordion, Button, Dropdown
+from widgetastic.utils import Parameter, VersionPick
+from widgetastic.widget import Select, View
+from widgetastic_patternfly import Accordion, BootstrapSelect, Button, Dropdown
 
 from cfme.base import Server
 from cfme.base.login import BaseLoggedInPage
@@ -75,5 +75,7 @@ class CloudIntelReports(CFMENavigateStep):
 
 
 class ReportsMultiBoxSelect(MultiBoxSelect):
+    available_options = VersionPick({'5.10': BootstrapSelect(id=Parameter("@available_items")),
+                                     '5.9': Select(id=Parameter("@available_items"))})
     move_into_button = Button(title=Parameter("@move_into"))
     move_from_button = Button(title=Parameter("@move_from"))
