@@ -10,7 +10,7 @@ from multiprocessing import Manager, Pool
 
 import pytz
 from tabulate import tabulate
-from wrapanapi.exceptions import VMInstanceNotFound
+from wrapanapi.exceptions import VMInstanceNotFound, MultipleInstancesError
 
 from cfme.utils.appliance import DummyAppliance
 from cfme.utils.log import logger, add_stdout_handler
@@ -168,6 +168,13 @@ def scan_vm(provider_key, vm_name, delta, match_queue, scan_failure_queue):
     except VMInstanceNotFound:
         logger.exception('%r: could not locate VM %s', provider_key, vm_name)
         failure = True
+    except MultipleInstancesError:
+        logger.exception('%r: multiple VM instances found %s', provider_key, vm_name)
+        logger.info('%r: deleting VM instances with name %s', provider_key, vm_name)
+        vm_lst = get_mgmt(provider_key).list_vms()
+        for vm in vm_lst:
+            if vm_name in vm.name:
+                vm.cleanup()
     except Exception:  # noqa
         failure = True
         logger.exception('%r: Exception getting creation time for %r', provider_key, vm_name)
@@ -212,6 +219,10 @@ def delete_vm(provider_key, vm_name, age, result_queue):
     except VMInstanceNotFound:
         logger.exception('%r: could not locate VM %s', provider_key, vm_name)
         # no reason to continue after this, nothing to try and delete
+        result_queue.put(VmReport(provider_key, vm_name, None, None, FAIL))
+        return
+    except MultipleInstancesError:
+        logger.exception('%r: multiple VM instances found while deleting %s', provider_key, vm_name)
         result_queue.put(VmReport(provider_key, vm_name, None, None, FAIL))
         return
     except Exception:  # noqa
