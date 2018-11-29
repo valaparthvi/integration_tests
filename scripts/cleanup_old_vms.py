@@ -169,12 +169,15 @@ def scan_vm(provider_key, vm_name, delta, match_queue, scan_failure_queue):
         logger.exception('%r: could not locate VM %s', provider_key, vm_name)
         failure = True
     except MultipleInstancesError:
-        logger.exception('%r: multiple VM instances found %s', provider_key, vm_name)
-        logger.info('%r: deleting VM instances with name %s', provider_key, vm_name)
+        logger.info('%r: Multiple VM instances found %s', provider_key, vm_name)
+        logger.info('%r: Deleting VM instances with name: %s', provider_key, vm_name)
         vm_lst = get_mgmt(provider_key).list_vms()
+        duplicate_deleted_vm = []
         for vm in vm_lst:
-            if vm_name in vm.name:
+            if vm_name in vm.name and vm_name not in duplicate_deleted_vm:
                 vm.cleanup()
+                duplicate_deleted_vm.append(vm_name)
+                print(duplicate_deleted_vm)
     except Exception:  # noqa
         failure = True
         logger.exception('%r: Exception getting creation time for %r', provider_key, vm_name)
@@ -189,16 +192,16 @@ def scan_vm(provider_key, vm_name, delta, match_queue, scan_failure_queue):
         if failure:
             scan_failure_queue.put(VmReport(provider_key, vm_name, FAIL, status, NULL))
             return
+    if vm_creation_time:
+        vm_delta = now - vm_creation_time
+        logger.info('%r: VM %r age: %s', provider_key, vm_name, vm_delta)
+        data = VmData(provider_key, vm_name, str(vm_delta))
 
-    vm_delta = now - vm_creation_time
-    logger.info('%r: VM %r age: %s', provider_key, vm_name, vm_delta)
-    data = VmData(provider_key, vm_name, str(vm_delta))
-
-    # test age to determine which queue it goes in
-    if delta < vm_delta:
-        match_queue.put(data)
-    else:
-        logger.info('%r: VM %r did not match age requirement', provider_key, vm.name)
+        # test age to determine which queue it goes in
+        if delta < vm_delta:
+            match_queue.put(data)
+        else:
+            logger.info('%r: VM %r did not match age requirement', provider_key, vm.name)
 
 
 def delete_vm(provider_key, vm_name, age, result_queue):
