@@ -47,7 +47,7 @@ def wait_for_requests(requests):
     wait_for(_finished, num_sec=45, delay=5, message="requests finished")
 
 
-COLLECTIONS_IN_59 = {
+COLLECTIONS_IN_510 = {
     "actions",
     "alert_definition_profiles",
     "alert_definitions",
@@ -61,21 +61,32 @@ COLLECTIONS_IN_59 = {
     "categories",
     "chargebacks",
     "cloud_networks",
+    "cloud_object_store_containers",
     "cloud_subnets",
+    "cloud_templates",
     "cloud_tenants",
+    "cloud_volume_types",
     "cloud_volumes",
     "clusters",
     "conditions",
     "configuration_script_payloads",
     "configuration_script_sources",
+    "configuration_scripts",
     "container_deployments",
+    "container_groups",
+    "container_images",
     "container_nodes",
     "container_projects",
+    "container_templates",
+    "container_volumes",
     "containers",
+    "conversion_hosts",
     "currencies",
     "custom_button_sets",
     "custom_buttons",
+    "customization_scripts",
     "data_stores",
+    "enterprises",
     "event_streams",
     "events",
     "features",
@@ -96,7 +107,11 @@ COLLECTIONS_IN_59 = {
     "notifications",
     "orchestration_stacks",
     "orchestration_templates",
+    "physical_chassis",
+    "physical_racks",
     "physical_servers",
+    "physical_storages",
+    "physical_switches",
     "pictures",
     "policies",
     "policy_actions",
@@ -112,15 +127,19 @@ COLLECTIONS_IN_59 = {
     "resource_pools",
     "results",
     "roles",
+    "search_filters",
     "security_groups",
     "servers",
     "service_catalogs",
     "service_dialogs",
+    "service_offerings",
     "service_orders",
+    "service_parameters_sets",
     "service_requests",
     "service_templates",
     "services",
     "settings",
+    "switches",
     "tags",
     "tasks",
     "templates",
@@ -132,32 +151,8 @@ COLLECTIONS_IN_59 = {
 }
 
 
-COLLECTIONS_NEWER_THAN_59 = {
-    "cloud_object_store_containers",
-    "cloud_templates",
-    "cloud_volume_types",
-    "configuration_scripts",
-    "container_groups",
-    "container_images",
-    "container_templates",
-    "container_volumes",
-    "conversion_hosts",
-    "customization_scripts",
-    "enterprises",
-    "physical_chassis",
-    "physical_racks",
-    "physical_storages",
-    "physical_switches",
-    "search_filters",
-    "service_offerings",
-    "service_parameters_sets",
-    "switches"
-}
+COLLECTIONS_IN_UPSTREAM = COLLECTIONS_ALL = COLLECTIONS_IN_510
 
-
-COLLECTIONS_IN_UPSTREAM = COLLECTIONS_IN_59
-COLLECTIONS_IN_510 = COLLECTIONS_IN_59 | COLLECTIONS_NEWER_THAN_59
-COLLECTIONS_ALL = COLLECTIONS_IN_59 | COLLECTIONS_IN_510
 # non-typical collections without "id" and "resources", or additional parameters are required
 COLLECTIONS_OMITTED = {"automate_workspaces", "metric_rollups", "settings"}
 
